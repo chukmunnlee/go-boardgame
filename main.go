@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -18,6 +19,7 @@ func main() {
 	skip := flag.Int("skip", 0, "Skips the number of results provided")
 	clientId := flag.String("client-id", os.Getenv("BGA_CLIENT_ID"), "Boardgame Atlas key")
 	search := flag.String("search", "", "Boardgame name")
+	output := flag.String("output", "text", "Output format")
 
 	flag.Parse()
 
@@ -28,8 +30,6 @@ func main() {
 		log.Fatalln("search parameter is not set")
 	}
 
-	fmt.Printf("search=%s, limit=%d, offset=%d\n", *search, *limit, *skip)
-
 	bga := New(*clientId)
 	var games *[]Boardgame
 	games, err := bga.Search(*search, *limit, *skip)
@@ -38,15 +38,36 @@ func main() {
 		log.Fatalf("Error: %v\n", err)
 	}
 
-	bold := color.New(color.Bold).Add(color.FgGreen).SprintfFunc()
-
 	if "" == Commit {
 		Commit = "dev"
 	}
 
+	switch *output {
+	case "json":
+		printJson(games)
+
+	case "text":
+		printText(games)
+
+	default:
+		printText(games)
+	}
+}
+
+func printJson(games *[]Boardgame) {
+	jsonStr, err := json.Marshal(games)
+	if nil != err {
+		log.Fatalf("Cannot marshal games to Json: %v", err)
+	}
+	fmt.Println(string(jsonStr))
+
+}
+
+func printText(games *[]Boardgame) {
+	bold := color.New(color.Bold).Add(color.FgGreen).SprintfFunc()
 	fmt.Printf("Version: %s\n", Commit)
 	for i := range *games {
 		fmt.Printf("%s: %s\n", bold("Title"), (*games)[i].Name)
-		fmt.Printf("%s: %s\n", bold("Description"), (*games)[i].Description)
+		fmt.Printf("%s: %s\n\n", bold("Description"), (*games)[i].Description)
 	}
 }

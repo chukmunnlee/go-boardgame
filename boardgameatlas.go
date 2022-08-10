@@ -45,8 +45,6 @@ func (bga *BoardgameAtlas) Search(search string, limit int, skip int) (*[]Boardg
 	query.Set("skip", fmt.Sprintf("%d", skip))
 	req.URL.RawQuery = query.Encode()
 
-	fmt.Printf("url: %s\n", req.URL.String())
-
 	resp, err := http.DefaultClient.Do(req)
 	if nil != err {
 		return nil, fmt.Errorf("request error: %v", err)
