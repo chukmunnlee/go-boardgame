@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/fatih/color"
 )
+
+var Commit string
 
 func main() {
 
@@ -26,7 +30,23 @@ func main() {
 
 	fmt.Printf("search=%s, limit=%d, offset=%d\n", *search, *limit, *skip)
 
-	bga := BoardgameAtlas{ClientId: *clientId}
-	bga.Search(*search, *limit, *skip)
+	bga := New(*clientId)
+	var games *[]Boardgame
+	games, err := bga.Search(*search, *limit, *skip)
 
+	if nil != err {
+		log.Fatalf("Error: %v\n", err)
+	}
+
+	bold := color.New(color.Bold).SprintFunc()
+
+	if "" == Commit {
+		Commit = "dev"
+	}
+
+	fmt.Printf("Version: %s\n", Commit)
+	for i := range *games {
+		fmt.Printf("Title: %s\n", bold((*games)[i].Name))
+		fmt.Printf("Description: %s\n", (*games)[i].Description)
+	}
 }
