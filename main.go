@@ -60,7 +60,6 @@ func printJson(games *[]Boardgame) {
 		log.Fatalf("Cannot marshal games to Json: %v", err)
 	}
 	fmt.Println(string(jsonStr))
-
 }
 
 func printText(games *[]Boardgame) {
