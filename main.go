@@ -38,7 +38,7 @@ func main() {
 		log.Fatalf("Error: %v\n", err)
 	}
 
-	bold := color.New(color.Bold).SprintFunc()
+	bold := color.New(color.Bold).Add(color.FgGreen).SprintfFunc()
 
 	if "" == Commit {
 		Commit = "dev"
@@ -46,7 +46,7 @@ func main() {
 
 	fmt.Printf("Version: %s\n", Commit)
 	for i := range *games {
-		fmt.Printf("Title: %s\n", bold((*games)[i].Name))
-		fmt.Printf("Description: %s\n", (*games)[i].Description)
+		fmt.Printf("%s: %s\n", bold("Title"), (*games)[i].Name)
+		fmt.Printf("%s: %s\n", bold("Description"), (*games)[i].Description)
 	}
 }
