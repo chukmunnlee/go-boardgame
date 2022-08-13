@@ -35,8 +35,11 @@ func (bga *BoardgameAtlas) Search(search string, limit int, skip int) (*[]Boardg
 
 	req, err := http.NewRequest(http.MethodGet, BOARDGAME_ATLAS_SEARCH, nil)
 	if nil != err {
-		return nil, fmt.Errorf("cannot create URL: %v\n", err)
+		return nil, fmt.Errorf("cannot create URL: %v", err)
 	}
+
+	headers := req.Header
+	headers.Add("Accept", "application/json")
 
 	query := req.URL.Query()
 	query.Set("name", search)
